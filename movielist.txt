@@ -27,7 +27,7 @@ movieID numberOfViewers rating releaseYear movieName
 26 193723 8.6 2014 "Interstellar"
 27 327484 8.6 1999 "The Green Mile"
 28 328937 8.6 1977 "Star Wars"
-29 658520 783293 8.5 1991 "Terminator 2: Judgment Day"
+29 658520 8.5 1991 "Terminator 2: Judgment Day"
 30 551398 8.5 1985 "Back to the Future"
 31 238928 8.5 2001 "Spirited Away"
 32 283783 8.5 1960 "Psycho"
