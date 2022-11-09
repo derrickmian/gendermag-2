@@ -1,116 +1,128 @@
 import java.io.*;
 import java.util.*;
 
-public class movie<A, B, C, D, E> {
+public class movie {
 
-    public A movieID;
-    public B numberOfViewers;
-    public C rating;
-    public D releaseYear;
-    public E movieName;
+    public int movieID;
+    public int numberOfViewers;
+    public double rating;
+    public int releaseYear;
+    public String movieName;
 
-    public static void main(String[] args) throws IOException {
+    static File reader = new File("movielist.txt");
 
-        // Read movielist.txt file
-        BufferedReader br = new BufferedReader(new FileReader("movielist.txt"));
+    public static void main(String[] args) throws FileNotFoundException {
+        try {
 
-        // Array List to Store Strings
-        List<String> movieListString = new ArrayList<>();
+            // Creates and Populates List of Movie
+            List<movie> movieList = new ArrayList<>();
+            readData(movieList);
 
-        // Transform file into ArrayList of Strings
-        String str;
-        while ((str = br.readLine()) != null) {
-            movieListString.add(str);
+            // Test readData method on list
+            System.out.println("List of Movies:");
+            printData(movieList);
+
+            // Creates and Populates Array of Movies
+            movie[] movieArray = new movie[100];
+            readData(movieArray);
+
+            // Test readData method on array
+            System.out.println("\nArray of Movies:");
+            printData(movieArray);
+
+            // Test search method on list
+            System.out.println();
+            System.out.println("Search List Test");
+            if (findUsing(1995, 8.6, movieList) != null) {
+                System.out.println("Movie released in 1995 with a rating of 8.6 is: "
+                        + findUsing(1995, 8.6, movieList).getMovieName());
+            } else
+                System.out.println("Movie not in List");
+
+            // Test search method on array
+            System.out.println();
+            System.out.println("Search Array Test");
+            if (findUsing(8.8, movieArray) != null) {
+                System.out.println("Movie released with 8.8 rating is: " + findUsing(8.8, movieArray).getMovieName());
+            } else
+                System.out.println("No Movie with that rating");
+
+            // Test List Comparator
+            System.out.println();
+            System.out.println("Comparing movies by Rating then Name:");
+            movieComparator(movieList);
+
+            // Test Array Comparator
+            System.out.println();
+            System.out.println("Comparing movies by Rating only:");
+            movieComparator(movieArray);
+
+            System.out.println("\nEND");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File Not Found");
         }
-
-        // Creates and Populates List of Movie
-        List<movie> movieList = new ArrayList<>();
-        readData(movieList, movieListString);
-
-        // Test readData method on list
-        System.out.println("List of Movies:");
-        printData(movieList);
-
-        // Creates and Populates Array of Movies
-        String[] movieArray = new String[101];
-        readData(movieArray, movieListString);
-
-        // Test readData method on array
-        System.out.println("\nArray of Movies:");
-        printData(movieArray);
-
-        // Test search method on list
-        System.out.println();
-        System.out.println("Search List Test");
-        if (findUsing(1995, 8.6, movieList) != null) {
-            System.out.println("Movie released in 1995 with a rating of 8.6 is: "
-                    + findUsing(1995, 8.6, movieList).getMovieName());
-        } else
-            System.out.println("Movie not in List");
-
-        // Test search method on array
-        System.out.println();
-        System.out.println("Search Array Test");
-        if (findUsing("8.8", movieArray) != null) {
-            System.out.println("Movie released with 8.8 rating is: " + findUsing("8.8", movieArray));
-        } else
-            System.out.println("No Movie with that rating");
-
-        System.out.println("\nEND");
-
-        br.close();
 
     }
 
     // Return List of Movies
-    public static List<movie> readData(List<movie> list, List<String> movieList) {
+    public static List<movie> readData(List<movie> list) throws FileNotFoundException {
 
-        List<String> movieListString = movieList;
+        Scanner input = new Scanner(reader);
 
-        // Convert any arrayList to array
-        String[] array = movieListString.toArray(new String[0]);
+        while (input.hasNext()) {
 
-        for (int i = 1; i <= 100; i++) {
+            int movieID = input.nextInt();
 
-            String spring = array[i];
-            String[] arrOfStr1 = spring.split(" ", 5);
+            int numberOfViewers = input.nextInt();
 
-            // Populating Variables
-            int movieID = Integer.parseInt(arrOfStr1[0]);
+            double rating = input.nextDouble();
 
-            int numberOfViewers = Integer.parseInt(arrOfStr1[1]);
+            int releaseYear = input.nextInt();
 
-            double rating = Double.parseDouble(arrOfStr1[2]);
+            String movieName = input.nextLine();
 
-            int releaseYear = Integer.parseInt(arrOfStr1[3]);
-
-            String movieName = arrOfStr1[4];
-
-            movie<Integer, Integer, Double, Integer, String> tempMovie = new movie<>(movieID, numberOfViewers, rating,
-                    releaseYear, movieName);
-
-            list.add(tempMovie);
+            list.add(new movie(movieID, numberOfViewers, rating, releaseYear, movieName));
         }
+
+        input.close();
+
         return list;
     }
 
     // Return Array of Movies
-    public static String[] readData(String[] array, List<String> movieList) {
-        List<String> movieListString = movieList;
+    public static movie[] readData(movie[] array) throws FileNotFoundException {
 
-        // Convert any arrayList to array
-        String[] tempArray = movieListString.toArray(new String[0]);
+        Scanner read = new Scanner(reader);
 
-        for (int i = 0; i <= 100; i++) {
-            array[i] = tempArray[i];
+        int i = 0;
+        while (read.hasNext()) {
+
+            int movieID = read.nextInt();
+
+            int numberOfViewers = read.nextInt();
+
+            double rating = read.nextDouble();
+
+            int releaseYear = read.nextInt();
+
+            String movieName = read.nextLine();
+
+            array[i] = new movie(movieID, numberOfViewers, rating, releaseYear, movieName);
+
+            i++;
+
         }
+
+        read.close();
+
         return array;
     }
 
     // Search List of Movies
-    public static movie findUsing(int year, double rating, List<movie> movie) {
-        for (movie element : movie) {
-            if (element.getReleaseYear().equals(year) && element.getRating().equals(rating)) {
+    public static movie findUsing(int year, double rating, List<movie> list) throws FileNotFoundException {
+        for (movie element : list) {
+            if (element.getReleaseYear() == year && element.getRating() == rating) {
                 return element;
             }
         }
@@ -118,29 +130,39 @@ public class movie<A, B, C, D, E> {
     }
 
     // Search Array of Movies
-    public static String findUsing(String rating, String[] array) {
-        for (int i = 0; i <= array.length; i++) {
-
-            String spring = array[i];
-            String[] arrOfStr = spring.split(" ", 5);
-
-            if (rating.equals(arrOfStr[2])) {
-                return array[i];
+    public static movie findUsing(double rating, movie[] array) throws FileNotFoundException {
+        for (movie element : array) {
+            if (element.getRating() == rating) {
+                return element;
             }
         }
         return null;
     }
 
     // Print Array of Movies
-    public static void printData(String[] array) {
+    public static void printData(movie[] array) throws FileNotFoundException {
         for (int i = 0; i < array.length; i++) {
             System.out.println(array[i]);
         }
     }
 
     // Print List of movies
-    public static <T> void printData(List<T> list) {
+    public static <T> void printData(List<T> list) throws FileNotFoundException {
         for (T element : list) {
+            System.out.println(element);
+        }
+    }
+
+    // Sort movies in a list by Rating then Name
+    public static void movieComparator(List<movie> list) {
+        list.sort(Comparator.comparing(movie::getRating).thenComparing(movie::getMovieName));
+        list.forEach(System.out::println);
+    }
+
+    // Sort movies in an array by Rating
+    public static void movieComparator(movie[] array) {
+        Arrays.sort(array, Comparator.comparing(movie::getRating));
+        for (movie element : array) {
             System.out.println(element);
         }
     }
@@ -151,50 +173,50 @@ public class movie<A, B, C, D, E> {
                 + " Number of Viewing: " + numberOfViewers + " Movie ID:  " + movieID;
     }
 
-    public A getMovieID() {
+    public int getMovieID() {
         return movieID;
     }
 
-    public void setMovieID(A movieID) {
+    public void setMovieID(int movieID) {
         this.movieID = movieID;
     }
 
-    public B getNumberOfViewers() {
+    public int getNumberOfViewers() {
         return numberOfViewers;
     }
 
-    public void setNumberOfViewers(B numberOfViewers) {
+    public void setNumberOfViewers(int numberOfViewers) {
         this.numberOfViewers = numberOfViewers;
     }
 
-    public C getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(C rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
-    public D getReleaseYear() {
+    public int getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(D releaseYear) {
+    public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
 
-    public E getMovieName() {
+    public String getMovieName() {
         return movieName;
     }
 
-    public void setMovieName(E movieName) {
+    public void setMovieName(String movieName) {
         this.movieName = movieName;
     }
 
     movie() {
     }
 
-    public movie(A movieID, B numberOfViewers, C rating, D releaseYear, E movieName) {
+    public movie(int movieID, int numberOfViewers, double rating, int releaseYear, String movieName) {
         this.movieID = movieID;
         this.numberOfViewers = numberOfViewers;
         this.rating = rating;
